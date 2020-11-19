@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "1021487880002",
+    "firebase_url": "https://yumarket-db.firebaseio.com",
+    "project_id": "yumarket-db",
+    "storage_bucket": "yumarket-db.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1021487880002:android:eafa9b84053ee5d6eddadb",
+        "android_client_info": {
+          "package_name": "com.example.yumarket_chat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1021487880002-pr1ucn2f819rcn88l11mpsfvtvil3chs.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.yumarket_chat",
+            "certificate_hash": "befe0da14f87b56a0d9c2bcd0af4e36712c9d07b"
+          }
+        },
+        {
+          "client_id": "1021487880002-tuf3b8hb3hpa5q2e7mg13l094uunfvfv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAsIM73Su6qYNUpTIbMo3_yDi7qQASDXGg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1021487880002-tuf3b8hb3hpa5q2e7mg13l094uunfvfv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

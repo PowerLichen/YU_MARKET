@@ -1,16 +1,24 @@
-# yumarket_chat
+# SE Project: flutterChat
 
-A new Flutter project.
+대학생을 위한 중고거래 어플리케이션.
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## 상세
+---
+- Software Engineering 과제를 위해 맡은 채팅 및 거래 기능
+- 담당 기능
+  ```
+  채팅 채널 출력
+  채팅창 화면
+  거래/대여 요청
+  거래/대여 승인
+  알림 확인하기
+  ```
+## 진척도
+---
+- 채팅 채널 출력: 90% (예외처리 남음)
+- 채팅창 화면 : 90% (예외처리 남음)
+- 거래/대여 요청 : 90% (예외처리 남음)
+- 거래/대여 승인 : 90% (예외처리 남음)
+- 알림 확인하기 : 0%
+  - FCM 사용 필요
+  - 관리자 메세지를 넣을 내부 DB 처리 필요

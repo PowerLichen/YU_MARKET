@@ -1,20 +1,25 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class TradeAcceptScreen extends StatefulWidget {
   final String postId;
   final DocumentSnapshot postDoc;
+  final DocumentSnapshot reqDoc;
   final int type;
 
-  const TradeAcceptScreen({Key key, this.postId, this.postDoc, this.type})
+  const TradeAcceptScreen(
+      {Key key, this.postId, this.postDoc, this.type, this.reqDoc})
       : super(key: key);
   @override
-  _TradeAcceptScreenState createState() => _TradeAcceptScreenState(postId, postDoc, type);
+  _TradeAcceptScreenState createState() =>
+      _TradeAcceptScreenState(postId, postDoc, reqDoc, type);
 }
 
 class _TradeAcceptScreenState extends State<TradeAcceptScreen> {
   final String postId;
   final DocumentSnapshot postDoc;
+  final DocumentSnapshot reqDoc;
   final int _type;
   // 거래 유형 정의. 0, 1, 2 => 판매, 대여, 경매
   String tradeDate, tradeTime;
@@ -25,51 +30,57 @@ class _TradeAcceptScreenState extends State<TradeAcceptScreen> {
   TextEditingController returnDateController = TextEditingController();
   TextEditingController returnTimeController = TextEditingController();
 
-  _TradeAcceptScreenState(this.postId, this.postDoc, this._type);
+  _TradeAcceptScreenState(this.postId, this.postDoc, this.reqDoc, this._type);
 
   @override
   void initState() {
     super.initState();
+    loadReqData();
+  }
+
+  loadReqData() {
+    //reqDoc은 요청된 거래 doc
     Timestamp tempTS;
     DateTime tempDT;
 
-    //판매 물품의 경우
-    if (_type == 0) {
-      tempTS = postDoc['EndDate'];
-      tempDT = tempTS.toDate();
-      dateController.text =
-          '${tempDT.year}-${tempDT.month}-${tempDT.day}'; //[DB에서 가져온 tradedate]
-      timeController.text =
-          '${tempDT.hour}:${tempDT.minute}'; //[DB에서 가져온 tradeTime]
-    }
+    tempTS = reqDoc['TradeDate'];
+    tempDT = tempTS.toDate();
+    dateController.text =
+        DateFormat('yyyy-MM-dd').format(tempDT); //[DB에서 가져온 tradedate]
+    timeController.text =
+        DateFormat('kk:mm').format(tempDT); //[DB에서 가져온 tradeTime]
 
     //대여 물품의 경우
     if (_type == 1) {
-      //거래 시간
-      tempTS = postDoc['StartDate'];
-      tempDT = tempTS.toDate();
-      dateController.text =
-          '${tempDT.year}-${tempDT.month}-${tempDT.day}'; //[DB에서 가져온 tradedate]
-      timeController.text =
-          '${tempDT.hour}:${tempDT.minute}'; //[DB에서 가져온 tradeTime]
-
-      //반납시간
-      tempTS = postDoc['EndDate'];
+      tempTS = reqDoc['ReturnDate'];
       tempDT = tempTS.toDate();
       returnDateController.text =
-          '${tempDT.year}-${tempDT.month}-${tempDT.day}'; //[DB에서 가져온 tradedate]
+          DateFormat('yyyy-MM-dd').format(tempDT); //[DB에서 가져온 tradedate]
       returnTimeController.text =
-          '${tempDT.hour}:${tempDT.minute}'; //[DB에서 가져온 tradeTime]
-
+          DateFormat('kk:mm').format(tempDT); //[DB에서 가져온 tradeTime]
     }
   }
 
-  tradeAccept(){
-    FirebaseFirestore.instance.collection('Post').doc(postId).update({
-      'Process': 2,
-      'TradeEndDate':Timestamp.fromDate(DateTime.now())
-    });
-    //거래 완료 시 Process를 2(거래완료)로 변경 
+  tradeAccept() {
+    if (_type == 0) {
+      //판매물품 DB처리
+      FirebaseFirestore.instance.collection('Post').doc(postId).update({
+        'Buyer': reqDoc.id,
+        'Process': 1,
+        'Place': reqDoc['Place'],
+        'StartDate': reqDoc['TradeDate'],
+        'EndDate': reqDoc['ReturnDate'],
+      });
+    } else if (_type == 1) {
+      //대여물품 DB처리
+      FirebaseFirestore.instance.collection('Post').doc(postId).update({
+        'Buyer': reqDoc.id,
+        'Process': 1,
+        'Place': reqDoc['Place'],
+        'EndDate': reqDoc['TradeDate'],
+      });
+    }
+    //거래 승인 시 Process를 1(거래 중)로 변경
     //TODO: 푸시알림
   }
 
@@ -80,15 +91,23 @@ class _TradeAcceptScreenState extends State<TradeAcceptScreen> {
         title: _type == 0 ? Text('거래요청 확인') : Text('대여요청 확인'),
       ),
       body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
             child: Row(
               children: [
                 Container(
-                  margin: const EdgeInsets.only(left: 16.0),
-                  child: CircleAvatar(child: Text('A')),
+                  margin: const EdgeInsets.all(16.0),
+                  child: Image.network(
+                    postDoc.data()['ImgPath'],
+                    fit: BoxFit.scaleDown,
+                  ),
+                  width: 100.0,
+                  height: 100.0,
                 ),
+                // Container(
+                //   margin: const EdgeInsets.only(left: 16.0),
+                //   child: CircleAvatar(child: Text('A')),
+                // ),
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
@@ -108,15 +127,21 @@ class _TradeAcceptScreenState extends State<TradeAcceptScreen> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              AbsorbPointer(
-                child: TextField(
-                  decoration: InputDecoration(
-                    labelText: '요청된 희망거래 장소',
-                    border: OutlineInputBorder(),
-                    filled: true,
-                  ),
-                ),
+              Row(
+                children: [
+                  Text('희망거래 장소 : '),
+                  Text(reqDoc['Place']),
+                ],
               ),
+              // AbsorbPointer(
+              //   child: TextField(
+              //     decoration: InputDecoration(
+              //       labelText: '요청된 희망거래 장소',
+              //       border: OutlineInputBorder(),
+              //       filled: true,
+              //     ),
+              //   ),
+              // ),
               SizedBox(height: 20.0),
               AbsorbPointer(
                 child: TextFormField(
@@ -185,7 +210,7 @@ class _TradeAcceptScreenState extends State<TradeAcceptScreen> {
                     '거래 승인',
                     style: TextStyle(fontSize: 24.0),
                   ),
-                  onPressed: (){
+                  onPressed: () {
                     tradeAccept();
                     Navigator.pop(context, true);
                   },

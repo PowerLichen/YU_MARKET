@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:yumarket_chat/chat/chat_list.dart';
 
-
 class LogInPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => _LogInPageState();
@@ -24,7 +23,7 @@ class _LogInPageState extends State<LogInPage> {
             ),
             */
             //로그인 입력 폼
-            _EmailPasswordForm(), 
+            _EmailPasswordForm(),
             //회원 가입 버튼
             /* 
             FlatButton (
@@ -49,15 +48,19 @@ class _EmailPasswordForm extends StatefulWidget {
 
 class _EmailPasswordFormState extends State<_EmailPasswordForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final TextEditingController _emailController = TextEditingController();   //아이디
-  final TextEditingController _passwordController = TextEditingController();//비번
+  final TextEditingController _emailController = TextEditingController(); //아이디
+  final TextEditingController _passwordController =
+      TextEditingController(); //비번
 
   @override
   void initState() {
     // TODO: implement initState
-    super.initState();
-    _emailController.text='temp@yu.ac.kr';
-    _passwordController.text = '21611711';
+    // super.initState();
+    // _emailController.text = 'temp@yu.ac.kr';
+    // _passwordController.text = '21611711';
+
+    _emailController.text = 'powerlichen@yu.ac.kr';
+    _passwordController.text = 'yumarket123!';
   }
 
   @override
@@ -102,8 +105,7 @@ class _EmailPasswordFormState extends State<_EmailPasswordForm> {
               ],
             ),
           ),
-        )
-      );
+        ));
   }
 
   @override
@@ -119,7 +121,8 @@ class _EmailPasswordFormState extends State<_EmailPasswordForm> {
       final User user = (await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: _emailController.text,
         password: _passwordController.text,
-      )).user;
+      ))
+          .user;
 
       Scaffold.of(context).showSnackBar(SnackBar(
         content: Text("${user.email} signed in"),
@@ -127,9 +130,13 @@ class _EmailPasswordFormState extends State<_EmailPasswordForm> {
 
       /*
       로그인 성공하면 TopPage()로 이동 (*자동로그인은 필요없어 코드 뺐음) 
-      */ 
-      
-      Navigator.push(context, MaterialPageRoute(builder: (context)=>ChatListScreen(currentUserId:user.uid))); //TopPage()이동하기 원하는곳으로 수정만 
+      */
+
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => ChatListScreen(
+                  currentUserId: user.uid))); //TopPage()이동하기 원하는곳으로 수정만
 
     } catch (e) {
       Scaffold.of(context).showSnackBar(SnackBar(
@@ -138,10 +145,3 @@ class _EmailPasswordFormState extends State<_EmailPasswordForm> {
     }
   }
 }
-
-
-
-
-
-
-

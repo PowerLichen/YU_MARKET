@@ -63,8 +63,9 @@ class _ChatListState extends State<ChatList> {
                     } else {
                       return ListView.builder(
                         padding: EdgeInsets.all(10.0),
-                        itemBuilder: (context, index) {         
-                          return buildItem(context, snapshot.data.documents[index]);
+                        itemBuilder: (context, index) {
+                          return buildItem(
+                              context, snapshot.data.documents[index]);
                         },
                         itemCount: snapshot.data.documents.length,
                       );
@@ -131,7 +132,7 @@ class _ChatListState extends State<ChatList> {
                             children: <Widget>[
                               Container(
                                 child: Text(
-                                  '닉네임: ${snapshot.data['NickName']}',
+                                  '닉네임: ${snapshot.data['UserName']}',
                                   style: TextStyle(color: Colors.black),
                                 ),
                                 alignment: Alignment.centerLeft,
@@ -157,7 +158,7 @@ class _ChatListState extends State<ChatList> {
                 }
                 return CircularProgressIndicator();
               }),
-          onPressed: () {            
+          onPressed: () {
             Navigator.push(
                 context,
                 MaterialPageRoute(

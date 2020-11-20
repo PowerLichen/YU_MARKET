@@ -32,6 +32,21 @@ class _TradeRequestScreenState extends State<TradeRequestScreen> {
   TextEditingController timeController = TextEditingController();
   TextEditingController returnTimeController = TextEditingController();
 
+  final _favoritePlace = [
+    'A08사범대학',
+    'B01노천강당',
+    'B02상경관',
+    'B03인문관',
+    'C04인문계식당',
+    'B03인문관B03인문관',
+    'E02천마아트센터',
+    'E21IT관',
+    'E29기계관',
+    'F01약대본관',
+    'F24과학도서관',
+    'G01생활과학대학본관'
+  ];
+  String selectedPlace;
   _TradeRequestScreenState(this.postId, this.postDoc);
 
   @override
@@ -39,6 +54,8 @@ class _TradeRequestScreenState extends State<TradeRequestScreen> {
     super.initState();
     // 0, 1, 2 => 판매, 대여, 경매
     _type = postDoc.data()['TradeType'];
+
+    selectedPlace = postDoc.data()['Place'];
 
     // tradeDT = DateTime(0);
     // returnDT = DateTime(0);
@@ -68,34 +85,37 @@ class _TradeRequestScreenState extends State<TradeRequestScreen> {
           return false;
         } else {
           //대여물품 DB처리
-          FirebaseFirestore.instance.collection('Post').doc(postId).update({
+          FirebaseFirestore.instance
+              .collection('Post')
+              .doc(postId)
+              .collection('TradeReq')
+              .doc(FirebaseAuth.instance.currentUser.uid)
+              .set({
             'Buyer': FirebaseAuth.instance.currentUser.uid,
-            'Process': 1,
-            //거래일자
-            'StartDate': Timestamp.fromDate(DateTime(tradeDT.year,
+            'Place': selectedPlace,
+            'TradeDate': Timestamp.fromDate(DateTime(tradeDT.year,
                 tradeDT.month, tradeDT.day, tradeToD.hour, tradeToD.minute)),
-            //반납일자
-            'EndDate': Timestamp.fromDate(DateTime(returnDT.year,
+            'ReturnDate': Timestamp.fromDate(DateTime(returnDT.year,
                 returnDT.month, returnDT.day, returnToD.hour, returnToD.minute))
-
-            //거래 장소
           });
           return true;
         }
       }
       //일반물품 DB처리
-      FirebaseFirestore.instance.collection('Post').doc(postId).update({
+      FirebaseFirestore.instance
+          .collection('Post')
+          .doc(postId)
+          .collection('TradeReq')
+          .doc(FirebaseAuth.instance.currentUser.uid)
+          .set({
         'Buyer': FirebaseAuth.instance.currentUser.uid,
-        'Process': 1,
-        //거래일자
-        'EndDate': Timestamp.fromDate(DateTime(tradeDT.year, tradeDT.month,
-            tradeDT.day, tradeToD.hour, tradeToD.minute))
-
-        //거래장소
+        'Place': selectedPlace,
+        'TradeDate': Timestamp.fromDate(DateTime(tradeDT.year, tradeDT.month,
+            tradeDT.day, tradeToD.hour, tradeToD.minute)),
       });
       return true;
     }
-    //거래 신청 완료 시 Process를 1(진행 중)로 변경
+    //거래 신청 완료 시 해당 Post의 TradeReq에 자신 uid로 문서 생성
   }
 
   @override
@@ -111,10 +131,15 @@ class _TradeRequestScreenState extends State<TradeRequestScreen> {
           Container(
             child: Row(
               children: [
-                //// TODO: 썸네일 이미지로 변경
+                //// 썸네일 이미지 출력
                 Container(
                   margin: const EdgeInsets.all(16.0),
-                  child: CircleAvatar(child: Text('A')),
+                  child: Image.network(
+                    postDoc.data()['ImgPath'],
+                    fit: BoxFit.scaleDown,
+                  ),
+                  width: 100.0,
+                  height: 100.0,
                 ),
                 Padding(
                   padding: const EdgeInsets.all(16.0),
@@ -133,12 +158,25 @@ class _TradeRequestScreenState extends State<TradeRequestScreen> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              TextField(
-                decoration: InputDecoration(
-                  labelText: '희망거래 장소',
-                  border: OutlineInputBorder(),
-                ),
+              Row(
+                children: [
+                  Text('희망거래 장소 : '),
+                  DropdownButton(
+                      value: selectedPlace,
+                      items: _favoritePlace.map(
+                        (value) {
+                          return DropdownMenuItem(
+                              value: value, child: Text(value));
+                        },
+                      ).toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          selectedPlace = value;
+                        });
+                      }),
+                ],
               ),
+
               SizedBox(height: 20.0),
               GestureDetector(
                 onTap: datePicker,

@@ -6,7 +6,8 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:toast/toast.dart';
+//import 'package:shared_preferences/shared_preferences.dart';
 import 'package:yumarket_chat/chat/full_photo.dart';
 import 'package:yumarket_chat/transaction/tradeAccept.dart';
 import 'package:yumarket_chat/transaction/tradeReq.dart';
@@ -62,7 +63,7 @@ class _ChatScreenState extends State<ChatScreen> {
   DocumentSnapshot postDoc;
 
   String groupChatId;
-  SharedPreferences prefs;
+  //SharedPreferences prefs;
 
   File imageFile;
   bool isLoading;
@@ -125,7 +126,7 @@ class _ChatScreenState extends State<ChatScreen> {
       setState(() {
         groupChatId = '$peerId-$currentId';
       });
-    }    
+    }
     var chatDoc = await FirebaseFirestore.instance
         .collection('messages')
         .doc(groupChatId)
@@ -149,6 +150,7 @@ class _ChatScreenState extends State<ChatScreen> {
     double buttonSize = MediaQuery.of(context).size.height / 20;
     return Container(
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           //사진 보내기 버튼
           Container(
@@ -166,7 +168,14 @@ class _ChatScreenState extends State<ChatScreen> {
                       icon: Icon(Icons.collections),
                       color: Colors.white,
                       iconSize: buttonSize,
-                      onPressed: getImage,
+                      onPressed: () {
+                        if (postDoc.data()['Process'] != 2) {
+                          getImage();
+                        } else {
+                          Scaffold.of(context).showSnackBar(
+                              SnackBar(content: Text("[거래 종료]된 상품입니다!")));
+                        }
+                      },
                     ),
                   ),
                 ),
@@ -197,16 +206,8 @@ class _ChatScreenState extends State<ChatScreen> {
                       icon: Icon(Icons.near_me),
                       color: Colors.white,
                       iconSize: buttonSize,
-                      onPressed: () async {                    
-                        final bool result = await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => TradeRequestScreen(
-                                    postId: postId, postDoc: postDoc)));
-
-                        if (result == true) {
-                          _handleSubmitted(postId, 2);
-                        }
+                      onPressed: () async {
+                        sendRequest();
                       },
                     ),
                   ),
@@ -226,7 +227,7 @@ class _ChatScreenState extends State<ChatScreen> {
       decoration: BoxDecoration(
           border: Border(top: BorderSide(color: Colors.grey[300], width: 0.5)),
           color: Colors.white),
-      padding: EdgeInsets.all(30.0),
+      //padding: EdgeInsets.all(30.0),
       height: MediaQuery.of(context).size.height / 6,
     );
   }
@@ -257,7 +258,7 @@ class _ChatScreenState extends State<ChatScreen> {
         imageUrl = await reference.getDownloadURL();
         setState(() {
           isLoading = false;
-          _handleSubmitted(imageUrl, 1);
+          //업로드 후 image Url 사용 부분
         });
       } on FirebaseException catch (err) {
         setState(() {
@@ -365,13 +366,20 @@ class _ChatScreenState extends State<ChatScreen> {
                   : Container(
                       //거래승인
                       child: FlatButton(
-                        onPressed: () {
+                        onPressed: () async {
+                          var reqDocument = await FirebaseFirestore.instance
+                              .collection('Post')
+                              .doc(postId)
+                              .collection('TradeReq')
+                              .doc(peerId)
+                              .get();
                           Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: (context) => TradeAcceptScreen(
                                       postId: postId,
                                       postDoc: postDoc,
+                                      reqDoc: reqDocument,
                                       type: postDoc.data()['TradeType'])));
                         },
                         child: Column(
@@ -452,6 +460,23 @@ class _ChatScreenState extends State<ChatScreen> {
       ),
       margin: EdgeInsets.only(bottom: 10.0, right: 10.0, left: 10.0),
     );
+  }
+
+  sendRequest() async {
+    if (postDoc.data()['Process'] == 0) {
+      final bool result = await Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) =>
+                  TradeRequestScreen(postId: postId, postDoc: postDoc)));
+
+      if (result == true) {
+        _handleSubmitted(postId, 2);
+      }
+    } else {
+      Scaffold.of(context)
+          .showSnackBar(SnackBar(content: Text("[거래 중] 혹은 [거래 종료]된 상품입니다!")));
+    }
   }
 
   Widget buildListMessage() {

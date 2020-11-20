@@ -1,3 +1,10 @@
+/*
+* 최초 작성자 : 최민수
+* 작성일 : 2020.11.16
+* 변경일 : 2020.11.21
+* 기능 설명 : 채팅 리스트를 출력하는 기능
+* */
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:yumarket_chat/chat/chat_screen.dart';

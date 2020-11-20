@@ -1,3 +1,10 @@
+/*
+* 최초 작성자 : 최민수
+* 작성일 : 2020.11.16
+* 변경일 : 2020.11.21
+* 기능 설명 : 채팅방을 나타냄
+* */
+
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -6,8 +13,6 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:toast/toast.dart';
-//import 'package:shared_preferences/shared_preferences.dart';
 import 'package:yumarket_chat/chat/full_photo.dart';
 import 'package:yumarket_chat/transaction/tradeAccept.dart';
 import 'package:yumarket_chat/transaction/tradeReq.dart';
@@ -227,7 +232,6 @@ class _ChatScreenState extends State<ChatScreen> {
       decoration: BoxDecoration(
           border: Border(top: BorderSide(color: Colors.grey[300], width: 0.5)),
           color: Colors.white),
-      //padding: EdgeInsets.all(30.0),
       height: MediaQuery.of(context).size.height / 6,
     );
   }

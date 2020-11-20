@@ -1,3 +1,10 @@
+/*
+* 최초 작성자 : 최민수
+* 작성일 : 2020.11.16
+* 변경일 : 2020.11.20
+* 기능 설명 : 요청된 거래를 수락하는 기능
+* */
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -87,152 +94,143 @@ class _TradeAcceptScreenState extends State<TradeAcceptScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomPadding: false,
       appBar: AppBar(
         title: _type == 0 ? Text('거래요청 확인') : Text('대여요청 확인'),
       ),
-      body: Column(
-        children: [
-          Container(
-            child: Row(
-              children: [
-                Container(
-                  margin: const EdgeInsets.all(16.0),
-                  child: Image.network(
-                    postDoc.data()['ImgPath'],
-                    fit: BoxFit.scaleDown,
-                  ),
-                  width: 100.0,
-                  height: 100.0,
-                ),
-                // Container(
-                //   margin: const EdgeInsets.only(left: 16.0),
-                //   child: CircleAvatar(child: Text('A')),
-                // ),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(postDoc.data()['Title']),
-                      Text('${postDoc.data()['Price'].toString()} 원'),
-                    ],
-                  ),
-                )
-              ],
-            ),
-          ),
-          // SizedBox(height: 20.0),
-          // Text('요청자> 컴공생A'),     //TODO: 학번이 나타나야 함
-          SizedBox(height: 20.0),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            Container(
+              child: Row(
                 children: [
-                  Text('희망거래 장소 : '),
-                  Text(reqDoc['Place']),
-                ],
-              ),
-              // AbsorbPointer(
-              //   child: TextField(
-              //     decoration: InputDecoration(
-              //       labelText: '요청된 희망거래 장소',
-              //       border: OutlineInputBorder(),
-              //       filled: true,
-              //     ),
-              //   ),
-              // ),
-              SizedBox(height: 20.0),
-              AbsorbPointer(
-                child: TextFormField(
-                  controller: dateController,
-                  decoration: InputDecoration(
-                    labelText: '요청된 거래일자',
-                    border: OutlineInputBorder(),
-                    filled: true,
+                  Container(
+                    margin: const EdgeInsets.all(16.0),
+                    child: Image.network(
+                      postDoc.data()['ImgPath'],
+                      fit: BoxFit.scaleDown,
+                    ),
+                    width: 100.0,
+                    height: 100.0,
                   ),
-                ),
-              ),
-
-              SizedBox(height: 20.0),
-              AbsorbPointer(
-                child: TextFormField(
-                  controller: timeController,
-                  decoration: InputDecoration(
-                    labelText: '요청된 거래시간',
-                    border: OutlineInputBorder(),
-                    filled: true,
-                  ),
-                ),
-              ),
-
-              //대여 선택
-              _type == 0
-                  ? Container()
-                  : Column(
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        SizedBox(height: 20.0),
-                        AbsorbPointer(
-                          child: TextFormField(
-                            controller: returnDateController,
-                            decoration: InputDecoration(
-                              labelText: '요청된 반납일자',
-                              border: OutlineInputBorder(),
-                              filled: true,
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 20.0),
-                        AbsorbPointer(
-                          child: TextFormField(
-                            controller: returnTimeController,
-                            decoration: InputDecoration(
-                              labelText: '요청된 반납시간',
-                              border: OutlineInputBorder(),
-                              filled: true,
-                            ),
-                          ),
-                        ),
+                        Text(postDoc.data()['Title']),
+                        Text('${postDoc.data()['Price'].toString()} 원'),
                       ],
                     ),
-              //요청된 거래 장소
-            ],
-          ),
-          SizedBox(height: 40.0),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ButtonTheme(
-                height: 50,
-                minWidth: MediaQuery.of(context).size.width / 4,
-                child: RaisedButton(
-                  child: Text(
-                    '거래 승인',
-                    style: TextStyle(fontSize: 24.0),
-                  ),
-                  onPressed: () {
-                    tradeAccept();
-                    Navigator.pop(context, true);
-                  },
-                ),
+                  )
+                ],
               ),
-              SizedBox(width: 40.0),
-              ButtonTheme(
-                height: 50,
-                minWidth: MediaQuery.of(context).size.width / 4,
-                child: RaisedButton(
-                  child: Text(
-                    '취소',
-                    style: TextStyle(fontSize: 24.0),
-                  ),
-                  onPressed: () {
-                    Navigator.pop(context, false);
-                  },
+            ),
+            // SizedBox(height: 20.0),
+            // Text('요청자> 컴공생A'),     //TODO: 학번이 나타나야 함
+            SizedBox(height: 20.0),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Text('희망거래 장소 : '),
+                    Text(reqDoc['Place']),
+                  ],
                 ),
-              ),
-            ],
-          ),
-        ],
+                SizedBox(height: 8.0),
+                AbsorbPointer(
+                  child: TextFormField(
+                    controller: dateController,
+                    decoration: InputDecoration(
+                      labelText: '요청된 거래일자',
+                      border: OutlineInputBorder(),
+                      filled: true,
+                    ),
+                  ),
+                ),
+
+                SizedBox(height: 8.0),
+                AbsorbPointer(
+                  child: TextFormField(
+                    controller: timeController,
+                    decoration: InputDecoration(
+                      labelText: '요청된 거래시간',
+                      border: OutlineInputBorder(),
+                      filled: true,
+                    ),
+                  ),
+                ),
+
+                //대여 선택
+                _type == 0
+                    ? Container()
+                    : Column(
+                        children: [
+                          SizedBox(height: 8.0),
+                          AbsorbPointer(
+                            child: TextFormField(
+                              controller: returnDateController,
+                              decoration: InputDecoration(
+                                labelText: '요청된 반납일자',
+                                border: OutlineInputBorder(),
+                                filled: true,
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 8.0),
+                          AbsorbPointer(
+                            child: TextFormField(
+                              controller: returnTimeController,
+                              decoration: InputDecoration(
+                                labelText: '요청된 반납시간',
+                                border: OutlineInputBorder(),
+                                filled: true,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                //요청된 거래 장소
+              ],
+            ),
+            SizedBox(height: 16.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ButtonTheme(
+                  height: 50,
+                  minWidth: MediaQuery.of(context).size.width / 4,
+                  child: RaisedButton(
+                    child: Text(
+                      '거래 승인',
+                      style: TextStyle(fontSize: 24.0),
+                    ),
+                    onPressed: () {
+                      tradeAccept();
+                      Navigator.pop(context, true);
+                    },
+                  ),
+                ),
+                SizedBox(width: 40.0),
+                ButtonTheme(
+                  height: 50,
+                  minWidth: MediaQuery.of(context).size.width / 4,
+                  child: RaisedButton(
+                    child: Text(
+                      '취소',
+                      style: TextStyle(fontSize: 24.0),
+                    ),
+                    onPressed: () {
+                      Navigator.pop(context, false);
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

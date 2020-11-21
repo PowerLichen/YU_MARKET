@@ -20,9 +20,9 @@ import 'package:yumarket_chat/transaction/tradeReq.dart';
 class Chat extends StatelessWidget {
   final String peerId;
   final String currentId;
-  final String peerAvatar;
+  final String postId;
 
-  const Chat({Key key, this.peerId, this.currentId, this.peerAvatar})
+  const Chat({Key key, this.peerId, this.currentId, this.postId})
       : super(key: key);
 
   @override
@@ -35,7 +35,7 @@ class Chat extends StatelessWidget {
       body: ChatScreen(
         currentId: currentId,
         peerId: peerId,
-        peerAvatar: peerAvatar,
+        postId: postId,
       ),
     );
   }
@@ -44,13 +44,13 @@ class Chat extends StatelessWidget {
 class ChatScreen extends StatefulWidget {
   final String peerId;
   final String currentId;
-  final String peerAvatar;
+  final String postId;
 
-  const ChatScreen({Key key, this.currentId, this.peerId, this.peerAvatar})
+  const ChatScreen({Key key, this.currentId, this.peerId, this.postId})
       : super(key: key);
   @override
-  _ChatScreenState createState() => _ChatScreenState(
-      peerId: peerId, peerAvatar: peerAvatar, currentId: currentId);
+  _ChatScreenState createState() =>
+      _ChatScreenState(peerId: peerId, postId: postId, currentId: currentId);
 }
 
 class _ChatScreenState extends State<ChatScreen> {
@@ -58,10 +58,9 @@ class _ChatScreenState extends State<ChatScreen> {
       {Key key,
       @required this.currentId,
       @required this.peerId,
-      @required this.peerAvatar});
+      @required this.postId});
   String peerId;
   String currentId;
-  String peerAvatar;
   String postId;
 
   //List<QueryDocumentSnapshot> listMessage = new List.from([]);
@@ -136,9 +135,12 @@ class _ChatScreenState extends State<ChatScreen> {
         .collection('messages')
         .doc(groupChatId)
         .get();
-    setState(() {
-      postId = chatDoc.data()['PostId'] ?? '';
-    });
+
+    if (postId == '') {
+      setState(() {
+        postId = chatDoc.data()['PostId'] ?? '';
+      });
+    }
 
     postDoc =
         await FirebaseFirestore.instance.collection('Post').doc(postId).get();
@@ -262,7 +264,8 @@ class _ChatScreenState extends State<ChatScreen> {
         imageUrl = await reference.getDownloadURL();
         setState(() {
           isLoading = false;
-          //업로드 후 image Url 사용 부분
+          //image message로 전송
+          _handleSubmitted(imageUrl, 1);
         });
       } on FirebaseException catch (err) {
         setState(() {
@@ -303,6 +306,35 @@ class _ChatScreenState extends State<ChatScreen> {
       print('nothing to send');
     }
     _textController.clear();
+  }
+
+  initMessage() {
+    // Chat(
+    //   currentId: currentUserId,
+    //   peerId: peerId,
+    //   postId: '',    //'' = 이미 진행 중인 채팅, postid = 채팅하기 시작
+    //   )
+    //채팅 시작 작업
+    //peer의 chatList에 current 추가
+    FirebaseFirestore.instance
+        .collection('User')
+        .doc(peerId)
+        .collection('chatList')
+        .doc(currentId)
+        .set({'chatWith': currentId});
+
+    //current의 chatList에 peer 추가
+    FirebaseFirestore.instance
+        .collection('User')
+        .doc(currentId)
+        .collection('chatList')
+        .doc(peerId)
+        .set({'chatWith': peerId});
+
+    FirebaseFirestore.instance
+        .collection('messages')
+        .doc(groupChatId)
+        .set({'PostId': postId});
   }
 
   Widget buildItem(int index, DocumentSnapshot document) {

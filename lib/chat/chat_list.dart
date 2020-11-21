@@ -172,7 +172,7 @@ class _ChatListState extends State<ChatList> {
                     builder: (context) => Chat(
                           currentId: currentUserId,
                           peerId: peerId,
-                          peerAvatar: document.data()['photoUrl'],
+                          postId: '',
                         )));
           },
           color: Colors.white,

@@ -1,4 +1,4 @@
-package com.example.yumarket_chat
+package com.example.yu_market
 
 import io.flutter.embedding.android.FlutterActivity
 

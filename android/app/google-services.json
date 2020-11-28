@@ -8,6 +8,35 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:1021487880002:android:f5ce687939d933b8eddadb",
+        "android_client_info": {
+          "package_name": "com.example.yu_market"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1021487880002-tuf3b8hb3hpa5q2e7mg13l094uunfvfv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAsIM73Su6qYNUpTIbMo3_yDi7qQASDXGg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1021487880002-tuf3b8hb3hpa5q2e7mg13l094uunfvfv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:1021487880002:android:eafa9b84053ee5d6eddadb",
         "android_client_info": {
           "package_name": "com.example.yumarket_chat"

@@ -7,7 +7,8 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:yumarket_chat/chat/chat_screen.dart';
+import 'package:yu_market/chat/chat_screen.dart';
+import 'package:yu_market/mypage/setting.dart';
 
 class ChatListScreen extends StatelessWidget {
   final String currentUserId;
@@ -17,7 +18,7 @@ class ChatListScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("채팅목록"),
+        title: Text("채팅목록",style: TextStyle(fontFamily: mySetting.font),),
       ),
       body: ChatList(currentUserId: currentUserId),
     );
@@ -36,13 +37,10 @@ class _ChatListState extends State<ChatList> {
   _ChatListState({Key key, @required this.currentUserId});
 
   final String currentUserId;
-  String nickname, chatWithId;
+  String chatWithId;
 
   bool isLoading = false;
 
-  void initState() {
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -81,7 +79,7 @@ class _ChatListState extends State<ChatList> {
                 ),
         ),
         Positioned(
-          child: isLoading ? const Loading() : Container(),
+          child: isLoading ? CircularProgressIndicator() : Container(),
         )
       ],
     );
@@ -107,24 +105,6 @@ class _ChatListState extends State<ChatList> {
                     children: <Widget>[
                       Material(
                         child:
-                            //document.data()['photoUrl'] != null
-                            // ? CachedNetworkImage(
-                            //     placeholder: (context, url) => Container(
-                            //       child: CircularProgressIndicator(
-                            //         strokeWidth: 1.0,
-                            //         valueColor:
-                            //             AlwaysStoppedAnimation<Color>(themeColor),
-                            //       ),
-                            //       width: 50.0,
-                            //       height: 50.0,
-                            //       padding: EdgeInsets.all(15.0),
-                            //     ),
-                            //     imageUrl: document.data()['photoUrl'],
-                            //     width: 50.0,
-                            //     height: 50.0,
-                            //     fit: BoxFit.cover,
-                            //   )
-                            // :
                             Icon(
                           Icons.account_circle,
                           size: 50.0,
@@ -140,21 +120,12 @@ class _ChatListState extends State<ChatList> {
                               Container(
                                 child: Text(
                                   '닉네임: ${snapshot.data['UserName']}',
-                                  style: TextStyle(color: Colors.black),
+                                  style: TextStyle(color: Colors.black,fontFamily: mySetting.font),
                                 ),
                                 alignment: Alignment.centerLeft,
                                 margin:
                                     EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 5.0),
-                              ),
-                              Container(
-                                child: Text(
-                                  'ID: $peerId',
-                                  style: TextStyle(color: Colors.black),
-                                ),
-                                alignment: Alignment.centerLeft,
-                                margin:
-                                    EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 0.0),
-                              )
+                              ),                              
                             ],
                           ),
                           margin: EdgeInsets.only(left: 20.0),
@@ -184,21 +155,5 @@ class _ChatListState extends State<ChatList> {
         margin: EdgeInsets.only(bottom: 10.0, left: 5.0, right: 5.0),
       );
     }
-  }
-}
-
-class Loading extends StatelessWidget {
-  const Loading();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: Center(
-        child: CircularProgressIndicator(
-          valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
-        ),
-      ),
-      color: Colors.white.withOpacity(0.8),
-    );
   }
 }

@@ -8,6 +8,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:yu_market/mypage/setting.dart';
 
 class TradeAcceptScreen extends StatefulWidget {
   final String postId;
@@ -75,8 +76,7 @@ class _TradeAcceptScreenState extends State<TradeAcceptScreen> {
         'Buyer': reqDoc.id,
         'Process': 1,
         'Place': reqDoc['Place'],
-        'StartDate': reqDoc['TradeDate'],
-        'EndDate': reqDoc['ReturnDate'],
+        'EndDate': reqDoc['TradeDate'],
       });
     } else if (_type == 1) {
       //대여물품 DB처리
@@ -84,7 +84,8 @@ class _TradeAcceptScreenState extends State<TradeAcceptScreen> {
         'Buyer': reqDoc.id,
         'Process': 1,
         'Place': reqDoc['Place'],
-        'EndDate': reqDoc['TradeDate'],
+        'StartDate': reqDoc['TradeDate'],
+        'EndDate': reqDoc['ReturnDate'],
       });
     }
     //거래 승인 시 Process를 1(거래 중)로 변경
@@ -96,7 +97,7 @@ class _TradeAcceptScreenState extends State<TradeAcceptScreen> {
     return Scaffold(
       resizeToAvoidBottomPadding: false,
       appBar: AppBar(
-        title: _type == 0 ? Text('거래요청 확인') : Text('대여요청 확인'),
+        title: _type == 0 ? Text('거래요청 확인',style: TextStyle(fontFamily: mySetting.font),) : Text('대여요청 확인',style: TextStyle(fontFamily: mySetting.font),),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -119,8 +120,8 @@ class _TradeAcceptScreenState extends State<TradeAcceptScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(postDoc.data()['Title']),
-                        Text('${postDoc.data()['Price'].toString()} 원'),
+                        Text(postDoc.data()['Title'],style: TextStyle(fontFamily: mySetting.font),),
+                        Text('${postDoc.data()['Price'].toString()} 원',style: TextStyle(fontFamily: mySetting.font),),
                       ],
                     ),
                   )
@@ -135,8 +136,8 @@ class _TradeAcceptScreenState extends State<TradeAcceptScreen> {
               children: [
                 Row(
                   children: [
-                    Text('희망거래 장소 : '),
-                    Text(reqDoc['Place']),
+                    Text('희망거래 장소 : ',style: TextStyle(fontFamily: mySetting.font),),
+                    Text(reqDoc['Place'],style: TextStyle(fontFamily: mySetting.font),),
                   ],
                 ),
                 SizedBox(height: 8.0),
@@ -205,7 +206,7 @@ class _TradeAcceptScreenState extends State<TradeAcceptScreen> {
                   child: RaisedButton(
                     child: Text(
                       '거래 승인',
-                      style: TextStyle(fontSize: 24.0),
+                      style: TextStyle(fontSize: 24.0,fontFamily: mySetting.font),
                     ),
                     onPressed: () {
                       tradeAccept();
@@ -220,7 +221,7 @@ class _TradeAcceptScreenState extends State<TradeAcceptScreen> {
                   child: RaisedButton(
                     child: Text(
                       '취소',
-                      style: TextStyle(fontSize: 24.0),
+                      style: TextStyle(fontSize: 24.0,fontFamily: mySetting.font),
                     ),
                     onPressed: () {
                       Navigator.pop(context, false);

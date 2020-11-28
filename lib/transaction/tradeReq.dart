@@ -8,6 +8,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:yu_market/mypage/setting.dart';
 
 class TradeRequestScreen extends StatefulWidget {
   final String postId;
@@ -31,8 +32,6 @@ class _TradeRequestScreenState extends State<TradeRequestScreen> {
   DateTime tradeDT, returnDT;
   TimeOfDay tradeToD, returnToD;
 
-  String tradeDate, tradeTime;
-  String returnDate, returnTime;
 
   TextEditingController dateController = TextEditingController();
   TextEditingController returnDateController = TextEditingController();
@@ -40,18 +39,27 @@ class _TradeRequestScreenState extends State<TradeRequestScreen> {
   TextEditingController returnTimeController = TextEditingController();
 
   final _favoritePlace = [
-    'A08사범대학',
-    'B01노천강당',
-    'B02상경관',
-    'B03인문관',
-    'C04인문계식당',
-    'B03인문관B03인문관',
-    'E02천마아트센터',
-    'E21IT관',
-    'E29기계관',
-    'F01약대본관',
-    'F24과학도서관',
-    'G01생활과학대학본관'
+    '사범대학',
+    '음악대학',
+    '상경관',
+    '인문관',
+    '법정관',
+    '중앙도서관',
+    '종합강의동',
+    '생활관',
+    'IT관',
+    '전기관',
+    '화공관',
+    '소재관',
+    '기계관',
+    '약대본관',
+    '과학관',
+    '정보전산원',
+    '건설관',
+    '과학도서관',
+    '자연계식당',
+    '생명공학관',
+    '생활과학대학본관'
   ];
   String selectedPlace;
   _TradeRequestScreenState(this.postId, this.postDoc);
@@ -71,7 +79,7 @@ class _TradeRequestScreenState extends State<TradeRequestScreen> {
   bool tradeReq() {
     if (postDoc.data()['Process'] == 1) {
       scaffoldKey.currentState
-          .showSnackBar(SnackBar(content: Text("해당 물품은 거래 중인 물품입니다.")));
+          .showSnackBar(SnackBar(content: Text("해당 물품은 거래 중인 물품입니다.",style: TextStyle(fontFamily: mySetting.font),)));
       return false;
     }
 
@@ -79,7 +87,7 @@ class _TradeRequestScreenState extends State<TradeRequestScreen> {
       // 거래일정 미입력 에러
       // Text("거래 일정을 입력해주세요."),
       scaffoldKey.currentState
-          .showSnackBar(SnackBar(content: Text("거래 일정을 입력해주세요.")));
+          .showSnackBar(SnackBar(content: Text("거래 일정을 입력해주세요.",style: TextStyle(fontFamily: mySetting.font),)));
       return false;
     } else {
       if (_type == 1) {
@@ -88,7 +96,7 @@ class _TradeRequestScreenState extends State<TradeRequestScreen> {
           // 반납일정 미입력 에러
           // Text("반납 일정을 입력해주세요."),
           scaffoldKey.currentState
-              .showSnackBar(SnackBar(content: Text("반납 일정을 입력해주세요.")));
+              .showSnackBar(SnackBar(content: Text("반납 일정을 입력해주세요.",style: TextStyle(fontFamily: mySetting.font),)));
           return false;
         } else {
           //대여물품 DB처리
@@ -131,7 +139,7 @@ class _TradeRequestScreenState extends State<TradeRequestScreen> {
       resizeToAvoidBottomInset: false,
       key: scaffoldKey,
       appBar: AppBar(
-        title: _type == 0 ? Text('거래 신청') : Text('대여 신청'),
+        title: _type == 0 ? Text('거래 신청',style: TextStyle(fontFamily: mySetting.font),) : Text('대여 신청',style: TextStyle(fontFamily: mySetting.font),),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -156,8 +164,8 @@ class _TradeRequestScreenState extends State<TradeRequestScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(postDoc.data()['Title']),
-                        Text('${postDoc.data()['Price'].toString()} 원'),
+                        Text(postDoc.data()['Title'],style: TextStyle(fontFamily: mySetting.font),),
+                        Text('${postDoc.data()['Price'].toString()} 원',style: TextStyle(fontFamily: mySetting.font),),
                       ],
                     ),
                   ),
@@ -170,7 +178,7 @@ class _TradeRequestScreenState extends State<TradeRequestScreen> {
               children: [
                 Row(
                   children: [
-                    Text('희망거래 장소 : '),
+                    Text('희망거래 장소 : ',style: TextStyle(fontFamily: mySetting.font),),
                     DropdownButton(
                         value: selectedPlace,
                         items: _favoritePlace.map(
@@ -262,7 +270,7 @@ class _TradeRequestScreenState extends State<TradeRequestScreen> {
                   child: RaisedButton(
                     child: Text(
                       '거래 신청',
-                      style: TextStyle(fontSize: 24.0),
+                      style: TextStyle(fontSize: 24.0,fontFamily: mySetting.font),
                     ),
                     onPressed: () {
                       bool result = tradeReq();
@@ -279,7 +287,7 @@ class _TradeRequestScreenState extends State<TradeRequestScreen> {
                   child: RaisedButton(
                     child: Text(
                       '취소',
-                      style: TextStyle(fontSize: 24.0),
+                      style: TextStyle(fontSize: 24.0,fontFamily: mySetting.font),
                     ),
                     onPressed: () {
                       Navigator.pop(context, false);
@@ -322,7 +330,6 @@ class _TradeRequestScreenState extends State<TradeRequestScreen> {
 
     if (dateTime != null) {
       returnDT = dateTime;
-      returnDate =
           returnDateController.text = dateTime.toString().split(' ')[0];
     }
   }

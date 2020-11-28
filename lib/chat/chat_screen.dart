@@ -1,7 +1,7 @@
 /*
 * 최초 작성자 : 최민수
 * 작성일 : 2020.11.16
-* 변경일 : 2020.11.21
+* 변경일 : 2020.11.23
 * 기능 설명 : 채팅방을 나타냄
 * */
 
@@ -13,9 +13,9 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:yumarket_chat/chat/full_photo.dart';
-import 'package:yumarket_chat/transaction/tradeAccept.dart';
-import 'package:yumarket_chat/transaction/tradeReq.dart';
+import 'package:yu_market/transaction/tradeAccept.dart';
+import 'package:yu_market/transaction/tradeReq.dart';
+import 'package:yu_market/mypage/setting.dart';
 
 class Chat extends StatelessWidget {
   final String peerId;
@@ -29,7 +29,7 @@ class Chat extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('채팅방'),
+        title: Text('채팅방',style: TextStyle(fontFamily: mySetting.font),),
         centerTitle: true,
       ),
       body: ChatScreen(
@@ -65,6 +65,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   //List<QueryDocumentSnapshot> listMessage = new List.from([]);
   DocumentSnapshot postDoc;
+  bool isChathasData;
 
   String groupChatId;
   //SharedPreferences prefs;
@@ -83,25 +84,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   bool _isComposing = false;
 
-  _scrollListener() {
-    if (listScrollController.offset >=
-            listScrollController.position.maxScrollExtent &&
-        !listScrollController.position.outOfRange) {
-      print("reach the bottom");
-      setState(() {
-        print("reach the bottom");
-        _limit += _limitIncrement;
-      });
-    }
-    if (listScrollController.offset <=
-            listScrollController.position.minScrollExtent &&
-        !listScrollController.position.outOfRange) {
-      print("reach the top");
-      setState(() {
-        print("reach the top");
-      });
-    }
-  }
+
 
   @override
   void initState() {
@@ -114,6 +97,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
     isShowFunc = false;
     isLoading = false;
+    isChathasData=false;
     imageUrl = '';
 
     readLocal();
@@ -140,12 +124,33 @@ class _ChatScreenState extends State<ChatScreen> {
       setState(() {
         postId = chatDoc.data()['PostId'] ?? '';
       });
+    }else{
+      isChathasData=true;
     }
 
     postDoc =
         await FirebaseFirestore.instance.collection('Post').doc(postId).get();
   }
 
+  _scrollListener() {
+    if (listScrollController.offset >=
+            listScrollController.position.maxScrollExtent &&
+        !listScrollController.position.outOfRange) {
+      print("reach the bottom");
+      setState(() {
+        print("reach the bottom");
+        _limit += _limitIncrement;
+      });
+    }
+    if (listScrollController.offset <=
+            listScrollController.position.minScrollExtent &&
+        !listScrollController.position.outOfRange) {
+      print("reach the top");
+      setState(() {
+        print("reach the top");
+      });
+    }
+  }
   void openFunction() {
     _focusNode.unfocus();
     setState(() {
@@ -180,7 +185,7 @@ class _ChatScreenState extends State<ChatScreen> {
                           getImage();
                         } else {
                           Scaffold.of(context).showSnackBar(
-                              SnackBar(content: Text("[거래 종료]된 상품입니다!")));
+                              SnackBar(content: Text("[거래 종료]된 상품입니다!",style: TextStyle(fontFamily: mySetting.font),)));
                         }
                       },
                     ),
@@ -191,13 +196,14 @@ class _ChatScreenState extends State<ChatScreen> {
                 ),
                 Text(
                   '사진 전송',
-                  style: TextStyle(fontSize: buttonSize / 3),
+                  style: TextStyle(fontSize: buttonSize / 3,fontFamily: mySetting.font),
                 )
               ],
             ),
           ),
           SizedBox(width: 40.0),
           //거래 요청하기 버튼
+          postDoc.data()['SellerUID']==currentId ? Container(): 
           Container(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -224,7 +230,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 ),
                 Text(
                   '거래 요청하기',
-                  style: TextStyle(fontSize: buttonSize / 3),
+                  style: TextStyle(fontSize: buttonSize / 3,fontFamily: mySetting.font),
                 )
               ],
             ),
@@ -272,7 +278,7 @@ class _ChatScreenState extends State<ChatScreen> {
           isLoading = false;
         });
         Scaffold.of(context).showSnackBar(SnackBar(
-          content: Text("This file is not an image"),
+          content: Text("This file is not an image",style: TextStyle(fontFamily: mySetting.font),),
         ));
       }
     });
@@ -280,6 +286,10 @@ class _ChatScreenState extends State<ChatScreen> {
 
   void _handleSubmitted(String content, int type) {
     // type: 0 = 메시지, 1 = image, 2 = 거래요청
+    if(isChathasData){
+      initMessage();
+    }
+    
     if (content.trim() != '') {
       _textController.clear();
       var documentReference = FirebaseFirestore.instance
@@ -345,7 +355,7 @@ class _ChatScreenState extends State<ChatScreen> {
             ? Container(
                 //normal message
                 child: Text(
-                  document.data()['content'],
+                  document.data()['content'],style: TextStyle(fontFamily: mySetting.font),
                 ),
                 padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
                 width: 200,
@@ -366,7 +376,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       children: [
                         Text(
                             '${DateFormat("M월 d일(E) h:mm a").format(DateTime.fromMillisecondsSinceEpoch(int.parse(document.data()['timestamp'])))}'),
-                        Text('거래 요청이 완료되었습니다.')
+                        Text('거래 요청이 완료되었습니다.',style: TextStyle(fontFamily: mySetting.font),)
                       ],
                     ),
                     padding: EdgeInsets.fromLTRB(20.0, 10.0, 15.0, 10.0),
@@ -386,7 +396,7 @@ class _ChatScreenState extends State<ChatScreen> {
           document.data()['type'] == 0
               ? Container(
                   child: Text(
-                    document.data()['content'],
+                    document.data()['content'],style: TextStyle(fontFamily: mySetting.font),
                   ),
                   padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
                   width: 200,
@@ -423,9 +433,9 @@ class _ChatScreenState extends State<ChatScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                                '${DateFormat("M월 d일(E) h:mm a").format(DateTime.fromMillisecondsSinceEpoch(int.parse(document.data()['timestamp'])))}'),
-                            Text('상대가 거래를 요청하였습니다.'),
-                            Text('눌러서 확인해보세요!')
+                                '${DateFormat("M월 d일(E) h:mm a").format(DateTime.fromMillisecondsSinceEpoch(int.parse(document.data()['timestamp'])))}',style: TextStyle(fontFamily: mySetting.font),),
+                            Text('상대가 거래를 요청하였습니다.',style: TextStyle(fontFamily: mySetting.font),),
+                            Text('눌러서 확인해보세요!',style: TextStyle(fontFamily: mySetting.font),)
                           ],
                         ),
                         padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
@@ -486,11 +496,6 @@ class _ChatScreenState extends State<ChatScreen> {
           clipBehavior: Clip.hardEdge,
         ),
         onPressed: () {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) =>
-                      FullPhoto(url: document.data()['content'])));
         },
         padding: EdgeInsets.all(0),
       ),
@@ -511,7 +516,7 @@ class _ChatScreenState extends State<ChatScreen> {
       }
     } else {
       Scaffold.of(context)
-          .showSnackBar(SnackBar(content: Text("[거래 중] 혹은 [거래 종료]된 상품입니다!")));
+          .showSnackBar(SnackBar(content: Text("[거래 중] 혹은 [거래 종료]된 상품입니다!",style: TextStyle(fontFamily: mySetting.font),)));
     }
   }
 
@@ -620,8 +625,4 @@ class _ChatScreenState extends State<ChatScreen> {
     ));
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
 }

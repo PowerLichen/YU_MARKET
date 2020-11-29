@@ -28,7 +28,6 @@ Future<void> main() async {
 }
 
 class MyApp extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -41,8 +40,8 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-class Splash extends StatefulWidget {
 
+class Splash extends StatefulWidget {
   @override
   _SplashState createState() => _SplashState();
 }
@@ -52,16 +51,17 @@ class _SplashState extends State<Splash> {
   String _font = 'NanumGothic';
   bool _inform = true;
   @override
-  void initState(){
+  void initState() {
     super.initState();
     _loadSetting();
   }
-  _loadSetting() async{
+
+  _loadSetting() async {
     _prefs = await SharedPreferences.getInstance();
     setState(() {
-      _font= _prefs.getString('font')??'NanumGothic';
-      _inform=_prefs.getBool('inform')??true;
-      mySetting = new Setting(_font,_inform);
+      _font = _prefs.getString('font') ?? 'NanumGothic';
+      _inform = _prefs.getBool('inform') ?? true;
+      mySetting = new Setting(_font, _inform);
     });
   }
 
@@ -70,13 +70,13 @@ class _SplashState extends State<Splash> {
     return StreamBuilder<User>(
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
-          if(snapshot.data == null) { //로그인이 안된 상태
+          if (snapshot.data == null) {
+            //로그인이 안된 상태
             return ChangeNotifierProvider<LoginToggle>.value(
               value: LoginToggle(),
               child: LogInPage(),
             );
-          }
-          else {
+          } else {
             return Scaffold(
               body: DefaultTabController(
                 length: 5,
@@ -84,19 +84,20 @@ class _SplashState extends State<Splash> {
                   body: TabBarView(
                     physics: NeverScrollableScrollPhysics(),
                     children: <Widget>[
-                      TopPage(),    //홈 이동
-                      FindNearByPage(),//FindNearByPage(),//내 주변
-                      CreatePage(),  //post 페이지
-                      ChatListScreen(currentUserId: FirebaseAuth.instance.currentUser.uid),    //채팅
-                      MyPage(),    //회원정보
+                      TopPage(), //홈 이동
+                      FindNearByPage(), //FindNearByPage(),//내 주변
+                      CreatePage(), //post 페이지
+                      ChatListScreen(
+                          currentUserId:
+                              FirebaseAuth.instance.currentUser.uid), //채팅
+                      MyPage(), //회원정보
                     ],
                   ),
-                  bottomNavigationBar: BottomBar(),//widget 폴더속 bottom_bar.dart
+                  bottomNavigationBar: BottomBar(), //widget 폴더속 bottom_bar.dart
                 ),
               ),
             );
           }
-        }
-    );
+        });
   }
 }
